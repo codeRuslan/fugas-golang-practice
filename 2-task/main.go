@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
@@ -9,7 +10,20 @@ import (
 	"sort"
 )
 
-//type Year int
+type Year int
+
+func (y Year) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%d"`, y)), nil
+}
+
+func (y *Year) UnmarshalJSON(data []byte) error {
+	var yearInt int
+	if err := json.Unmarshal(data, &yearInt); err != nil {
+		return err
+	}
+	*y = Year(yearInt)
+	return nil
+}
 
 //func (y int) MarshalJSON() ([]byte, error) {
 //	return []byte(fmt.Sprintf(`"%d"`, y)), nil
@@ -64,7 +78,7 @@ func CreateNewBook(w http.ResponseWriter, r *http.Request, books *BookList) {
 type Book struct {
 	Name   string `json:"name"`
 	Author string `json:"author"`
-	Year   int    `json:"year"`
+	Year   Year   `json:"year"`
 }
 
 type sortedBooks []Book
