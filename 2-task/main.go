@@ -45,7 +45,8 @@ func handleRequests(books bookstore.BookStore) {
 		ReturnAllBooks(w, r, books)
 	}).Methods(http.MethodGet)
 	myRouter.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request) {
-		CreateNewBook(w, r)
+		bookList, _ := books.(*bookstore.BookList)
+		CreateNewBook(w, r, bookList)
 	}).Methods(http.MethodPut)
 
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
@@ -56,7 +57,7 @@ func ReturnAllBooks(w http.ResponseWriter, r *http.Request, books bookstore.Book
 	json.NewEncoder(w).Encode(books.GetAllBooks())
 }
 
-func CreateNewBook(w http.ResponseWriter, r *http.Request) {
+func CreateNewBook(w http.ResponseWriter, r *http.Request, books *bookstore.BookList) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
@@ -70,8 +71,6 @@ func CreateNewBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//books.Books = append(books.Books, newBooks)
-
-	json.NewEncoder(w).Encode(newBooks)
-
+	books.Books = append(books.Books, newBooks...)
+	json.NewEncoder(w).Encode(books.GetAllBooks())
 }
