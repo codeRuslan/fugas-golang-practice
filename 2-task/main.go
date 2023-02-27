@@ -35,7 +35,7 @@ func main() {
 			book.Book{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: 1929},
 		},
 	}
-	sort.Sort(book.SortedBooks(books.Books))
+	//sort.Sort(book.SortedBooks(books.Books))
 	handleRequests(books)
 }
 
@@ -54,7 +54,9 @@ func handleRequests(books bookstore.BookStore) {
 
 func ReturnAllBooks(w http.ResponseWriter, r *http.Request, books bookstore.BookStore) {
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(books.GetAllBooks())
+	allBooks := books.GetAllBooks()
+	sort.Sort(book.SortedBooks(allBooks))
+	json.NewEncoder(w).Encode(allBooks)
 }
 
 func CreateNewBook(w http.ResponseWriter, r *http.Request, books *bookstore.BookList) {

@@ -15,7 +15,7 @@ func (a SortedBooks) Len() int {
 }
 
 func (a SortedBooks) Less(i, j int) bool {
-	return i < j
+	return a[i].Year < a[j].Year
 }
 
 func (a SortedBooks) Swap(i, j int) {
