@@ -28,15 +28,15 @@ func (y *Year) UnmarshalJSON(data []byte) error {
 }
 
 func main() {
-	books := &bookstore.BookList{
-		Books: []book.Book{
-			book.Book{Name: "Rage", Author: "Stephen King", Year: 1977},
-			book.Book{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: 1997},
-			book.Book{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: 1929},
-		},
+	books := []book.Book{
+		book.Book{Name: "Rage", Author: "Stephen King", Year: 1977},
+		book.Book{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: 1997},
+		book.Book{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: 1929},
 	}
+
+	bookstore := bookstore.NewBookList(books)
 	//sort.Sort(book.SortedBooks(books.Books))
-	handleRequests(books)
+	handleRequests(bookstore)
 }
 
 func handleRequests(books bookstore.BookStore) {
@@ -45,7 +45,7 @@ func handleRequests(books bookstore.BookStore) {
 		ReturnAllBooks(w, r, books)
 	}).Methods(http.MethodGet)
 	myRouter.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request) {
-		bookList, _ := books.(*bookstore.BookList)
+		if bookList, _ := books.(*bookstore.bookList)
 		CreateNewBook(w, r, bookList)
 	}).Methods(http.MethodPut)
 

@@ -6,10 +6,14 @@ type BookStore interface {
 	GetAllBooks() []book.Book
 }
 
-type BookList struct {
+type bookList struct {
 	Books []book.Book
 }
 
-func (bl *BookList) GetAllBooks() []book.Book {
+func NewBookList(books []book.Book) BookStore {
+	return &bookList{Books: books}
+}
+
+func (bl *bookList) GetAllBooks() []book.Book {
 	return bl.Books
 }
