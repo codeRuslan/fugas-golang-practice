@@ -1,76 +1,90 @@
 package main
 
 import (
-	"awesomeProject1/book"
-	"awesomeProject1/bookstore"
+	"awesomeProject1/entity"
+	"awesomeProject1/handlers"
+	"awesomeProject1/mock"
+	"bytes"
+	"encoding/json"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
-	"strings"
 	"testing"
 )
 
-func Test_get_method(t *testing.T) {
-
-	books := &bookstore.BookList{
-		Books: []book.Book{
-			book.Book{Name: "Rage", Author: "Stephen King", Year: 1977},
-			book.Book{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: 1997},
-			book.Book{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: 1929},
-		},
-	}
-
+func TestBooksGet(t *testing.T) {
 	t.Run("Check GET Method", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ReturnAllBooks(w, r, books)
-		})
+		expectedBooks := []entity.Book{
+			{Name: "Rage", Author: "Stephen King", Year: entity.Year(1977)},
+			{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: entity.Year(1977)},
+			{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: entity.Year(1929)},
+		}
+
+		mockBookStore := mock.NewMockBookStore(ctrl)
+		mockBookStore.EXPECT().GetAllBooks().Return(expectedBooks)
+
+		handler := handlers.Handler{BookStore: mockBookStore}
 
 		req, err := http.NewRequest(http.MethodGet, "/books", nil)
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NoError(t, err)
 
 		rr := httptest.NewRecorder()
-		handler.ServeHTTP(rr, req)
 
-		if status := rr.Code; status != http.StatusOK {
-			t.Errorf("handler returned wrong status code: got %v want %v",
-				status, http.StatusOK)
-		}
+		handler.ReturnAllBooks(rr, req)
 
-		/*expected := `[{"name":"All Quiet on the Western Front","author":"Erich Maria Remarque","year":1929},{"name":"Rage","author":"Stephen King","year":1977},{"name":"Philosopher's Stone","author":"J. K. Rowling","year":1997}]`
-		if !reflect.DeepEqual(rr.Body.String(), expected) {
-			t.Errorf("handler returned unexpected body: got %v want %v",
-				rr.Body.String(), expected)
-		}*/
+		assert.Equal(t, http.StatusOK, rr.Code)
+
+		var books []entity.Book
+
+		err = json.Unmarshal(rr.Body.Bytes(), &books)
+
+		assert.NoError(t, err)
+
+		assert.Equal(t, expectedBooks, books)
+
 	})
 
 	t.Run("Check PUT Method", func(t *testing.T) {
-		sample_data := `[{"name":"The Great Gatsby","author":"F. Scott Fitzgerald","year":1925}]`
-		req, err := http.NewRequest("PUT", "/books", strings.NewReader(sample_data))
-		if err != nil {
-			t.Fatal(err)
-		}
-		req.Header.Set("Content-Type", "application/json")
-		recorder := httptest.NewRecorder()
-		books := &bookstore.BookList{}
-		CreateNewBook(recorder, req, books)
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-		if status := recorder.Code; status != http.StatusOK {
-			t.Errorf("handler returned wrong status code: got %v want %v",
-				status, http.StatusOK)
+		expectedBooks := []entity.Book{
+			{Name: "Rage", Author: "Stephen King", Year: entity.Year(1977)},
+			{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: entity.Year(1977)},
+			{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: entity.Year(1929)},
+			{Name: "The Fellowship of the Ring", Author: "J. R. R. Tolkien", Year: entity.Year(1954)},
 		}
 
-		expectedBooks := []book.Book{
-			book.Book{Name: "The Great Gatsby", Author: "F. Scott Fitzgerald", Year: 1925},
+		inputBooks := []entity.Book{
+			{Name: "The Fellowship of the Ring", Author: "J. R. R. Tolkien", Year: entity.Year(1954)},
 		}
 
-		if !reflect.DeepEqual(books.Books, expectedBooks) {
-			t.Errorf("handler returned unexpected body: got %v want %v",
-				books.Books, expectedBooks)
-		}
+		mockBookStore := mock.NewMockBookStore(ctrl)
+		mockBookStore.EXPECT().CreateNewBooks(inputBooks).Return(expectedBooks, nil)
+
+		handler := handlers.Handler{BookStore: mockBookStore}
+
+		jsonInput, err := json.Marshal(inputBooks)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest(http.MethodPut, "/books", bytes.NewReader(jsonInput))
+		assert.NoError(t, err)
+
+		rr := httptest.NewRecorder()
+
+		handler.CreateNewBook(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+
+		var books []entity.Book
+
+		err = json.Unmarshal(rr.Body.Bytes(), &books)
+		assert.NoError(t, err)
+		assert.Equal(t, expectedBooks, books)
 
 	})
-
 }
