@@ -1,6 +1,8 @@
 package main
 
-import "awesomeProject1/entity"
+import (
+	"awesomeProject1/entity"
+)
 
 var (
 	ExpectedBooksGet = []entity.Book{

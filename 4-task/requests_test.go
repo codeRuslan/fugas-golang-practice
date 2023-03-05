@@ -1,7 +1,6 @@
 package main
 
 import (
-	"awesomeProject1/entity"
 	"awesomeProject1/handlers"
 	"awesomeProject1/mock"
 	"bytes"
@@ -14,7 +13,7 @@ import (
 )
 
 func TestBooksGet(t *testing.T) {
-	t.Run("Sucess ReturnAllBooks", func(t *testing.T) {
+	t.Run("Sucess Get Existing Books", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -32,17 +31,11 @@ func TestBooksGet(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rr.Code)
 
-		var books []entity.Book
-
-		err = json.Unmarshal(rr.Body.Bytes(), &books)
-
-		assert.NoError(t, err)
-
-		assert.Equal(t, ExpectedBooksGet, books)
+		assert.Equal(t, "{\"books\":[{\"name\":\"Rage\",\"author\":\"Stephen King\",\"year\":1977},{\"name\":\"Philosopher's Stone\",\"author\":\"J. K. Rowling\",\"year\":1977},{\"name\":\"All Quiet on the Western Front\",\"author\":\"Erich Maria Remarque\",\"year\":1929}],\"date\":\"05.03.2023\"}\n", rr.Body.String())
 
 	})
 
-	t.Run("Sucess Update", func(t *testing.T) {
+	t.Run("Sucess Put New Books", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -63,11 +56,7 @@ func TestBooksGet(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rr.Code)
 
-		var books []entity.Book
-
-		err = json.Unmarshal(rr.Body.Bytes(), &books)
-		assert.NoError(t, err)
-		assert.Equal(t, ExpectedBooksPut, books)
+		assert.Equal(t, "{\"books\":[{\"name\":\"Rage\",\"author\":\"Stephen King\",\"year\":1977},{\"name\":\"Philosopher's Stone\",\"author\":\"J. K. Rowling\",\"year\":1977},{\"name\":\"All Quiet on the Western Front\",\"author\":\"Erich Maria Remarque\",\"year\":1929},{\"name\":\"The Fellowship of the Ring\",\"author\":\"J. R. R. Tolkien\",\"year\":1954}],\"date\":\"05.03.2023\"}\n", rr.Body.String())
 
 	})
 }
