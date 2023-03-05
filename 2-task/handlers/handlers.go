@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"awesomeProject1/bookstore"
 	"awesomeProject1/entity"
+	"awesomeProject1/store"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"io/ioutil"
@@ -12,10 +12,10 @@ import (
 )
 
 type Handler struct {
-	BookStore bookstore.BookStore
+	BookStore store.Book
 }
 
-func HandleRequests(books bookstore.BookStore) {
+func HandleRequests(books store.Book) {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	handlerInstance := Handler{BookStore: books}
 	myRouter.HandleFunc("/books", handlerInstance.ReturnAllBooks).Methods(http.MethodGet)
@@ -26,7 +26,7 @@ func HandleRequests(books bookstore.BookStore) {
 
 func (booksHandler *Handler) ReturnAllBooks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	allBooks := booksHandler.BookStore.GetAllBooks()
+	allBooks := booksHandler.BookStore.GetAll()
 	json.NewEncoder(w).Encode(allBooks)
 }
 
@@ -46,7 +46,7 @@ func (booksHandler *Handler) CreateNewBook(w http.ResponseWriter, r *http.Reques
 	}
 
 	sort.Sort(entity.SortedBooks(newBooks))
-	allBooks, err := booksHandler.BookStore.CreateNewBooks(newBooks)
+	allBooks, err := booksHandler.BookStore.Update(newBooks)
 
 	if err != nil {
 		http.Error(w, "Failed to retrieve books", http.StatusInternalServerError)
