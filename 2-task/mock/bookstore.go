@@ -35,9 +35,9 @@ func (m *MockBookStore) EXPECT() *MockBookStoreMockRecorder {
 }
 
 // CreateNewBooks mocks base method.
-func (m *MockBookStore) CreateNewBooks(books []entity.Book) ([]entity.Book, error) {
+func (m *MockBookStore) Update(books []entity.Book) ([]entity.Book, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateNewBooks", books)
+	ret := m.ctrl.Call(m, "Update", books)
 	ret0, _ := ret[0].([]entity.Book)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -46,13 +46,13 @@ func (m *MockBookStore) CreateNewBooks(books []entity.Book) ([]entity.Book, erro
 // CreateNewBooks indicates an expected call of CreateNewBooks.
 func (mr *MockBookStoreMockRecorder) CreateNewBooks(books interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewBooks", reflect.TypeOf((*MockBookStore)(nil).CreateNewBooks), books)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockBookStore)(nil).Update), books)
 }
 
 // GetAllBooks mocks base method.
-func (m *MockBookStore) GetAllBooks() []entity.Book {
+func (m *MockBookStore) GetAll() []entity.Book {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllBooks")
+	ret := m.ctrl.Call(m, "GetAll")
 	ret0, _ := ret[0].([]entity.Book)
 	return ret0
 }
@@ -60,7 +60,7 @@ func (m *MockBookStore) GetAllBooks() []entity.Book {
 // GetAllBooks indicates an expected call of GetAllBooks.
 func (mr *MockBookStoreMockRecorder) GetAllBooks() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllBooks", reflect.TypeOf((*MockBookStore)(nil).GetAllBooks))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockBookStore)(nil).GetAll))
 }
 
 

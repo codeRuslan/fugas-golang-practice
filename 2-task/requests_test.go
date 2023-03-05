@@ -42,7 +42,7 @@ func TestBooksGet(t *testing.T) {
 
 	})
 
-	t.Run("Sucess CreateNewBooks", func(t *testing.T) {
+	t.Run("Sucess Update", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 

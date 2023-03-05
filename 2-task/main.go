@@ -1,9 +1,9 @@
 package main
 
 import (
-	"awesomeProject1/bookstore"
 	"awesomeProject1/entity"
 	"awesomeProject1/handlers"
+	"awesomeProject1/store"
 )
 
 func main() {
@@ -13,6 +13,6 @@ func main() {
 		entity.Book{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: 1929},
 	}
 
-	bookstore := bookstore.NewBookList(books)
+	bookstore := store.NewBook(books)
 	handlers.HandleRequests(bookstore)
 }
