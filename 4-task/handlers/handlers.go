@@ -10,10 +10,16 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"time"
 )
 
 type Handler struct {
 	BookStore store.Book
+}
+
+type BookResponse struct {
+	Books []entity.Book    `json:"books"`
+	Date  entity.CivilTime `json:"date"`
 }
 
 func HandleRequests(books store.Book) {
@@ -21,14 +27,21 @@ func HandleRequests(books store.Book) {
 	handlerInstance := Handler{BookStore: books}
 	myRouter.HandleFunc("/books", handlerInstance.ReturnAllBooks).Methods(http.MethodGet)
 	myRouter.HandleFunc("/books", handlerInstance.CreateNewBook).Methods(http.MethodPut)
-	port := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
-	log.Fatal(http.ListenAndServe(port.ListenPort, myRouter))
+	configFile := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
+	log.Fatal(http.ListenAndServe(configFile.ListenPort, myRouter))
 }
 
 func (booksHandler *Handler) ReturnAllBooks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	allBooks := booksHandler.BookStore.GetAll()
-	json.NewEncoder(w).Encode(allBooks)
+	queryTime := time.Now()
+
+	booksResp := BookResponse{
+		Books: allBooks,
+		Date:  entity.CivilTime(queryTime),
+	}
+
+	json.NewEncoder(w).Encode(booksResp)
 }
 
 func (booksHandler *Handler) CreateNewBook(w http.ResponseWriter, r *http.Request) {
@@ -54,5 +67,12 @@ func (booksHandler *Handler) CreateNewBook(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	json.NewEncoder(w).Encode(allBooks)
+	queryTime := time.Now()
+
+	booksResp := BookResponse{
+		Books: allBooks,
+		Date:  entity.CivilTime(queryTime),
+	}
+
+	json.NewEncoder(w).Encode(booksResp)
 }
