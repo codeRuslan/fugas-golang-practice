@@ -14,18 +14,12 @@ import (
 )
 
 func TestBooksGet(t *testing.T) {
-	t.Run("Check GET Method", func(t *testing.T) {
+	t.Run("Sucess ReturnAllBooks", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		expectedBooks := []entity.Book{
-			{Name: "Rage", Author: "Stephen King", Year: entity.Year(1977)},
-			{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: entity.Year(1977)},
-			{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: entity.Year(1929)},
-		}
-
 		mockBookStore := mock.NewMockBookStore(ctrl)
-		mockBookStore.EXPECT().GetAllBooks().Return(expectedBooks)
+		mockBookStore.EXPECT().GetAllBooks().Return(ExpectedBooksGet)
 
 		handler := handlers.Handler{BookStore: mockBookStore}
 
@@ -44,31 +38,20 @@ func TestBooksGet(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		assert.Equal(t, expectedBooks, books)
+		assert.Equal(t, ExpectedBooksGet, books)
 
 	})
 
-	t.Run("Check PUT Method", func(t *testing.T) {
+	t.Run("Sucess CreateNewBooks", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		expectedBooks := []entity.Book{
-			{Name: "Rage", Author: "Stephen King", Year: entity.Year(1977)},
-			{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: entity.Year(1977)},
-			{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: entity.Year(1929)},
-			{Name: "The Fellowship of the Ring", Author: "J. R. R. Tolkien", Year: entity.Year(1954)},
-		}
-
-		inputBooks := []entity.Book{
-			{Name: "The Fellowship of the Ring", Author: "J. R. R. Tolkien", Year: entity.Year(1954)},
-		}
-
 		mockBookStore := mock.NewMockBookStore(ctrl)
-		mockBookStore.EXPECT().CreateNewBooks(inputBooks).Return(expectedBooks, nil)
+		mockBookStore.EXPECT().CreateNewBooks(InputBooksPut).Return(ExpectedBooksPut, nil)
 
 		handler := handlers.Handler{BookStore: mockBookStore}
 
-		jsonInput, err := json.Marshal(inputBooks)
+		jsonInput, err := json.Marshal(InputBooksPut)
 		assert.NoError(t, err)
 
 		req, err := http.NewRequest(http.MethodPut, "/books", bytes.NewReader(jsonInput))
@@ -84,7 +67,7 @@ func TestBooksGet(t *testing.T) {
 
 		err = json.Unmarshal(rr.Body.Bytes(), &books)
 		assert.NoError(t, err)
-		assert.Equal(t, expectedBooks, books)
+		assert.Equal(t, ExpectedBooksPut, books)
 
 	})
 }
