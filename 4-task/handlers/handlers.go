@@ -5,6 +5,7 @@ import (
 	"awesomeProject1/entity"
 	"awesomeProject1/store"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
@@ -17,28 +18,25 @@ type Handler struct {
 	BookStore store.Book
 }
 
-type BookResponse struct {
-	Books []entity.Book    `json:"books"`
-	Date  entity.CivilTime `json:"date"`
-}
-
 func HandleRequests(books store.Book) {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	handlerInstance := Handler{BookStore: books}
 	myRouter.HandleFunc("/books", handlerInstance.ReturnAllBooks).Methods(http.MethodGet)
 	myRouter.HandleFunc("/books", handlerInstance.CreateNewBook).Methods(http.MethodPut)
-	configFile := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
+	configFile, err := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
+	if err != nil {
+		fmt.Println("Error when reading config file")
+	}
 	log.Fatal(http.ListenAndServe(configFile.ListenPort, myRouter))
 }
 
 func (booksHandler *Handler) ReturnAllBooks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	allBooks := booksHandler.BookStore.GetAll()
-	queryTime := time.Now()
 
-	booksResp := BookResponse{
+	booksResp := entity.BookResponse{
 		Books: allBooks,
-		Date:  entity.CivilTime(queryTime),
+		Date:  entity.CivilTime(time.Now()),
 	}
 
 	json.NewEncoder(w).Encode(booksResp)
@@ -67,11 +65,9 @@ func (booksHandler *Handler) CreateNewBook(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	queryTime := time.Now()
-
-	booksResp := BookResponse{
+	booksResp := entity.BookResponse{
 		Books: allBooks,
-		Date:  entity.CivilTime(queryTime),
+		Date:  entity.CivilTime(time.Now()),
 	}
 
 	json.NewEncoder(w).Encode(booksResp)

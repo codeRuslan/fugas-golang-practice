@@ -2,6 +2,7 @@ package entity
 
 import (
 	"awesomeProject1/config"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -14,7 +15,7 @@ func (c *CivilTime) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	ConfigFile := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
+	ConfigFile, err := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
 	t, err := time.Parse(ConfigFile.TimeFormat, value)
 	if err != nil {
 		return err
@@ -24,6 +25,9 @@ func (c *CivilTime) UnmarshalJSON(b []byte) error {
 }
 
 func (c CivilTime) MarshalJSON() ([]byte, error) {
-	ConfigFile := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
+	ConfigFile, err := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
+	if err != nil {
+		fmt.Println("MarhalJSON operation failed")
+	}
 	return []byte(`"` + time.Time(c).Format(ConfigFile.TimeFormat) + `"`), nil
 }

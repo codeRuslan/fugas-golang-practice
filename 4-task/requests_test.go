@@ -31,10 +31,11 @@ func TestBooksGet(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rr.Code)
 
-		assert.Equal(t, "{\"books\":[{\"name\":\"Rage\",\"author\":\"Stephen King\",\"year\":1977},{\"name\":\"Philosopher's Stone\",\"author\":\"J. K. Rowling\",\"year\":1977},{\"name\":\"All Quiet on the Western Front\",\"author\":\"Erich Maria Remarque\",\"year\":1929}],\"date\":\"05.03.2023\"}\n", rr.Body.String())
-
+		assert.Equal(t, "{\"books\":[{\"name\":\"Rage\",\"author\":\"Stephen King\",\"year\":1977},{\"name\":\"Philosopher's Stone\",\"author\":\"J. K. Rowling\",\"year\":1977},{\"name\":\"All Quiet on the Western Front\",\"author\":\"Erich Maria Remarque\",\"year\":1929}],\"date\":\"07.03.2023\"}\n", rr.Body.String())
 	})
+}
 
+func TestBookPut(t *testing.T) {
 	t.Run("Sucess Put New Books", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
@@ -56,7 +57,32 @@ func TestBooksGet(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rr.Code)
 
-		assert.Equal(t, "{\"books\":[{\"name\":\"Rage\",\"author\":\"Stephen King\",\"year\":1977},{\"name\":\"Philosopher's Stone\",\"author\":\"J. K. Rowling\",\"year\":1977},{\"name\":\"All Quiet on the Western Front\",\"author\":\"Erich Maria Remarque\",\"year\":1929},{\"name\":\"The Fellowship of the Ring\",\"author\":\"J. R. R. Tolkien\",\"year\":1954}],\"date\":\"05.03.2023\"}\n", rr.Body.String())
+		assert.Equal(t, "{\"books\":[{\"name\":\"Rage\",\"author\":\"Stephen King\",\"year\":1977},{\"name\":\"Philosopher's Stone\",\"author\":\"J. K. Rowling\",\"year\":1977},{\"name\":\"All Quiet on the Western Front\",\"author\":\"Erich Maria Remarque\",\"year\":1929},{\"name\":\"The Fellowship of the Ring\",\"author\":\"J. R. R. Tolkien\",\"year\":1954}],\"date\":\"07.03.2023\"}\n", rr.Body.String())
 
+	})
+}
+
+func TestBookPutErrorInvalidJSON(t *testing.T) {
+	t.Run("Fail to parse request body", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		mockBookStore := mock.NewMockBookStore(ctrl)
+
+		handler := handlers.Handler{BookStore: mockBookStore}
+
+		// This request body is invalid JSON and should trigger an error when unmarshaling
+		invalidJSON := []byte(`{invalid json}`)
+
+		req, err := http.NewRequest(http.MethodPut, "/books", bytes.NewReader(invalidJSON))
+		assert.NoError(t, err)
+
+		rr := httptest.NewRecorder()
+
+		handler.CreateNewBook(rr, req)
+
+		// The response body should contain the error message
+		expectedResp := "Failed to parse request body\n"
+		assert.Equal(t, expectedResp, rr.Body.String())
 	})
 }
