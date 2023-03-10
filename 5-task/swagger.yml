@@ -1,0 +1,111 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: |-
+    Documentation for Books API, for Fugas practice course
+    
+    
+    Some useful links:
+    - [Books API Repository](https://github.com/codeRuslan/fugas-golang-practice)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: ruslanpilipyuk@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+servers:
+  - url: localhost:8000/books
+tags:
+  - name: books
+    description: Access to Book repository
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+paths:
+  /books:
+    get:
+      tags:
+        - books
+      summary: Get existing books in repository
+      description: Get all existing books located in repository
+      operationId: ReturnAllBooks
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BooksGet'
+        '404':
+          description: Books not found
+    #      security:
+    #         - petstore_auth:
+    #         - write:pets
+    #           - read:pets
+    put:
+      tags:
+        - books
+      summary: Put list of books into repository
+      description: Put new list of books into repository
+      operationId: CreateNewBook
+      requestBody:
+        description: Put list of books into repository
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BooksGet'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BooksGet'
+        '404':
+          description: Book not found
+#      security:
+#        - petstore_auth:
+#            - write:pets
+#            - read:pets
+components:
+  schemas:
+    BooksGet:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              author:
+                type: string
+              year:
+                type: integer
+          example:
+            - name: Rage
+              author: Stephen King
+              year: 1977
+            - name: Philosopher's Stone
+              author: J. K. Rowling
+              year: 1997
+            - name: All Quiet on the Western Front
+              author: Erich Maria Remarque
+              year: 1929
+  #securitySchemes:
+  #  petstore_auth:
+  #    type: oauth2
+  #    flows:
+  #      implicit:
+  #        authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+  #        scopes:
+  #          write:pets: modify pets in your account
+  #          read:pets: read your pets
+  #  api_key:
+  #    type: apiKey
+  #    name: api_key
+  #    in: header
