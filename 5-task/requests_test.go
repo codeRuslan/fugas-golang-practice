@@ -18,7 +18,7 @@ func TestBooksGet(t *testing.T) {
 		defer ctrl.Finish()
 
 		mockBookStore := mock.NewMockBookStore(ctrl)
-		mockBookStore.EXPECT().GetAllBooks().Return(ExpectedBooksGet)
+		mockBookStore.EXPECT().GetAllBooks().Return(mock.ExpectedBooksGet)
 
 		handler := handlers.Handler{BookStore: mockBookStore}
 
@@ -41,11 +41,11 @@ func TestBookPut(t *testing.T) {
 		defer ctrl.Finish()
 
 		mockBookStore := mock.NewMockBookStore(ctrl)
-		mockBookStore.EXPECT().CreateNewBooks(InputBooksPut).Return(ExpectedBooksPut, nil)
+		mockBookStore.EXPECT().CreateNewBooks(mock.InputBooksPut).Return(mock.ExpectedBooksPut, nil)
 
 		handler := handlers.Handler{BookStore: mockBookStore}
 
-		jsonInput, err := json.Marshal(InputBooksPut)
+		jsonInput, err := json.Marshal(mock.InputBooksPut)
 		assert.NoError(t, err)
 
 		req, err := http.NewRequest(http.MethodPut, "/books", bytes.NewReader(jsonInput))

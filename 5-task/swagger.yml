@@ -15,7 +15,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.11
 servers:
-  - url: localhost:8000/books
+  - url: localhost:8000
 tags:
   - name: books
     description: Access to Book repository
@@ -28,9 +28,8 @@ paths:
       tags:
         - books
       summary: Get existing books in repository
-      description: Get all existing books located in repository
+      description: -
       operationId: ReturnAllBooks
-      parameters: []
       responses:
         '200':
           description: Successful operation
@@ -40,22 +39,18 @@ paths:
                 $ref: '#/components/schemas/BooksGet'
         '404':
           description: Books not found
-    #      security:
-    #         - petstore_auth:
-    #         - write:pets
-    #           - read:pets
     put:
       tags:
         - books
       summary: Put list of books into repository
-      description: Put new list of books into repository
+      description: -
       operationId: CreateNewBook
       requestBody:
         description: Put list of books into repository
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BooksGet'
+              $ref: '#/components/schemas/BooksPut'
         required: true
       responses:
         '200':
@@ -63,13 +58,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BooksGet'
+                $ref: '#/components/schemas/BooksPut'
         '404':
           description: Book not found
-#      security:
-#        - petstore_auth:
-#            - write:pets
-#            - read:pets
 components:
   schemas:
     BooksGet:
@@ -77,15 +68,6 @@ components:
       properties:
         books:
           type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              author:
-                type: string
-              year:
-                type: integer
           example:
             - name: Rage
               author: Stephen King
@@ -96,16 +78,44 @@ components:
             - name: All Quiet on the Western Front
               author: Erich Maria Remarque
               year: 1929
-  #securitySchemes:
-  #  petstore_auth:
-  #    type: oauth2
-  #    flows:
-  #      implicit:
-  #        authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-  #        scopes:
-  #          write:pets: modify pets in your account
-  #          read:pets: read your pets
-  #  api_key:
-  #    type: apiKey
-  #    name: api_key
-  #    in: header
+            - date: 02.01.2006
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            author:
+              type: string
+            year:
+              type: integer
+            date:
+              type: string
+              format: date
+    BooksPut:
+      type: object
+      properties:
+        books:
+          type: array
+          example:
+            - name: Rage
+              author: Stephen King
+              year: 1977
+            - name: Philosopher's Stone
+              author: J. K. Rowling
+              year: 1997
+            - name: All Quiet on the Western Front
+              author: Erich Maria Remarque
+              year: 1929
+            - date: 02.01.2006
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            author:
+              type: string
+            year:
+              type: integer
+            date:
+              type: string
+              format: date
