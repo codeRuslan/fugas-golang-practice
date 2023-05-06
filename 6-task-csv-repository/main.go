@@ -1,6 +1,7 @@
 package main
 
 import (
+	"awesomeProject1/config"
 	"awesomeProject1/handlers"
 	"awesomeProject1/repository"
 	"awesomeProject1/store"
@@ -12,8 +13,8 @@ func main() {
 		entity.Book{Name: "Philosopher's Stone", Author: "J. K. Rowling", Year: 1997}, Philosopher's Stone,J. K. Rowling,1997
 		entity.Book{Name: "All Quiet on the Western Front", Author: "Erich Maria Remarque", Year: 1929}, All Quiet on the Western Front,Erich Maria Remarque,1929
 	}*/
-
-	books := repository.GetCSVBooks("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/repository/input_test_data.csv")
+	configFile, _ := config.ReadJsonConfigFile("/Users/ruslanpilipyuk/GolandProjects/awesomeProject1/config/config.json")
+	books := repository.GetCSVBooks(configFile.FilePath)
 	bookstore := store.NewBook(books)
 	handlers.HandleRequests(bookstore)
 }

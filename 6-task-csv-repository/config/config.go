@@ -9,6 +9,7 @@ import (
 type Config struct {
 	ListenPort string `json:ListenPort`
 	TimeFormat string `json:TimeFormat`
+	FilePath   string `json:FilePath`
 }
 
 func ReadJsonConfigFile(path string) (*Config, error) {
