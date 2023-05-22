@@ -1,25 +1,27 @@
 package store
 
 import (
-	"awesomeProject1/config"
 	"awesomeProject1/entity"
 	"github.com/gocarina/gocsv"
 	"os"
 )
 
-var ConfigFileBookstore *config.Config
+//var ConfigFileBookstore *config.Config
 
 type Book interface {
+	ReadBooksInCSV() ([]entity.Book, error)
 	GetAll() []entity.Book
 	Update(books []entity.Book) ([]entity.Book, error)
 }
 
 type book struct {
-	Books []entity.Book
+	Books       []entity.Book
+	CSVFilePath string
 }
 
-func NewBook(books []entity.Book) Book {
-	return &book{Books: books}
+func NewBook(books []entity.Book, csvFilePath string) Book {
+	return &book{Books: books,
+		CSVFilePath: csvFilePath}
 }
 
 func (bl *book) GetAll() []entity.Book {
@@ -28,7 +30,7 @@ func (bl *book) GetAll() []entity.Book {
 
 func (bl *book) Update(books []entity.Book) ([]entity.Book, error) {
 	bl.Books = books
-	file, err := os.OpenFile(ConfigFileBookstore.FilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	file, err := os.OpenFile(bl.CSVFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, err
 	}
@@ -41,8 +43,8 @@ func (bl *book) Update(books []entity.Book) ([]entity.Book, error) {
 	return bl.Books, nil
 }
 
-func ReadBooksInCSV(path string) []entity.Book {
-	bookCSVfile, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, os.ModePerm)
+func (bl *book) ReadBooksInCSV() ([]entity.Book, error) {
+	bookCSVfile, err := os.OpenFile(bl.CSVFilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
@@ -54,5 +56,5 @@ func ReadBooksInCSV(path string) []entity.Book {
 		panic(err)
 	}
 
-	return BooksCSV
+	return BooksCSV, nil
 }
