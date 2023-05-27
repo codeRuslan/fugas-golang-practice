@@ -6,11 +6,8 @@ import (
 	"os"
 )
 
-//var ConfigFileBookstore *config.Config
-
 type Book interface {
-	ReadBooksInCSV() ([]entity.Book, error)
-	GetAll() []entity.Book
+	GetAll() ([]entity.Book, error)
 	Update(books []entity.Book) ([]entity.Book, error)
 }
 
@@ -22,10 +19,6 @@ type book struct {
 func NewBook(books []entity.Book, csvFilePath string) Book {
 	return &book{Books: books,
 		CSVFilePath: csvFilePath}
-}
-
-func (bl *book) GetAll() []entity.Book {
-	return bl.Books
 }
 
 func (bl *book) Update(books []entity.Book) ([]entity.Book, error) {
@@ -43,7 +36,7 @@ func (bl *book) Update(books []entity.Book) ([]entity.Book, error) {
 	return bl.Books, nil
 }
 
-func (bl *book) ReadBooksInCSV() ([]entity.Book, error) {
+func (bl *book) GetAll() ([]entity.Book, error) {
 	bookCSVfile, err := os.OpenFile(bl.CSVFilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)

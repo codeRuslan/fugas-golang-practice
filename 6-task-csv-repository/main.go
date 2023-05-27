@@ -18,11 +18,11 @@ func main() {
 
 	bookstore := store.NewBook([]entity.Book{}, ConfigFile.FilePath)
 
-	books, err := bookstore.ReadBooksInCSV()
+	books, err := bookstore.GetAll()
 	if err != nil {
 		panic(err)
 	}
-	
+
 	bookstore = store.NewBook(books, ConfigFile.FilePath)
 	handlers.HandleRequests(bookstore)
 }

@@ -32,7 +32,11 @@ func HandleRequests(books store.Book) {
 
 func (booksHandler *Handler) ReturnAllBooks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	allBooks := booksHandler.BookStore.GetAll()
+	allBooks, err := booksHandler.BookStore.GetAll()
+
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	booksResp := entity.BookResponse{
 		Books: allBooks,
