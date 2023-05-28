@@ -62,17 +62,13 @@ func (booksHandler *Handler) CreateNewBook(w http.ResponseWriter, r *http.Reques
 	}
 
 	sort.Sort(entity.SortedBooks(newBooks))
-	allBooks, err := booksHandler.BookStore.Update(newBooks)
+	err = booksHandler.BookStore.Update(newBooks)
 
 	if err != nil {
 		http.Error(w, "Failed to retrieve books", http.StatusInternalServerError)
 		return
 	}
 
-	booksResp := entity.BookResponse{
-		Books: allBooks,
-		Date:  entity.CivilTime(time.Now()),
-	}
+	booksHandler.ReturnAllBooks(w, r)
 
-	json.NewEncoder(w).Encode(booksResp)
 }

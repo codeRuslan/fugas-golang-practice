@@ -2,7 +2,6 @@ package main
 
 import (
 	"awesomeProject1/config"
-	"awesomeProject1/entity"
 	"awesomeProject1/handlers"
 	"awesomeProject1/store"
 	"log"
@@ -16,13 +15,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	bookstore := store.NewBook([]entity.Book{}, ConfigFile.FilePath)
+	bookstore := store.NewBook(ConfigFile.FilePath)
 
-	books, err := bookstore.GetAll()
-	if err != nil {
-		panic(err)
-	}
-
-	bookstore = store.NewBook(books, ConfigFile.FilePath)
 	handlers.HandleRequests(bookstore)
 }
