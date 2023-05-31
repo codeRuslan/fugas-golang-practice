@@ -1,0 +1,5 @@
+{
+  "ListenPort": ":8000",
+  "TimeFormat": "02.01.2006",
+  "FilePath": "input_test_data.csv"
+}
