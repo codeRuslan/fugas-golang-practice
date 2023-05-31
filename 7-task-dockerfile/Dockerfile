@@ -1,6 +1,6 @@
-# Base image, golang 1.18
+# Base image, golang 1.19
 
-FROM golang:1.18.3
+FROM golang:1.19
 WORKDIR /workspace
 COPY . .
 RUN go mod download

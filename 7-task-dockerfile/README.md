@@ -26,3 +26,13 @@ http://localhost:8000/books \
 }
 ]'
 ```
+
+### How to run Docker container
+
+```
+docker build -t fugas .
+
+docker network create app-network
+
+docker run -itd --name=test_fugas --network=app-network fugas
+```
